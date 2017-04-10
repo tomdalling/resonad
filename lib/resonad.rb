@@ -10,18 +10,7 @@ module Resonad
     Failure.new(*args)
   end
 
-  module ConvenienceMethods
-    def failure?
-      not success?
-    end
-
-    def and_then(&block)
-      flat_map(&block)
-    end
-  end
-
   class Success
-    include ConvenienceMethods
     attr_accessor :value
 
     def initialize(value)
@@ -31,6 +20,19 @@ module Resonad
 
     def success?
       true
+    end
+
+    def failure?
+      false
+    end
+
+    def on_success
+      yield value
+      self
+    end
+
+    def on_failure
+      self
     end
 
     def error
@@ -49,10 +51,10 @@ module Resonad
     def flat_map
       yield(@value)
     end
+    alias_method :and_then, :flat_map
   end
 
   class Failure
-    include ConvenienceMethods
     attr_accessor :error
 
     def initialize(error)
@@ -62,6 +64,19 @@ module Resonad
 
     def success?
       false
+    end
+
+    def failure?
+      true
+    end
+
+    def on_success
+      self
+    end
+
+    def on_failure
+      yield error
+      self
     end
 
     def value
@@ -75,6 +90,7 @@ module Resonad
     def flat_map
       self
     end
+    alias_method :and_then, :flat_map
   end
 
 end

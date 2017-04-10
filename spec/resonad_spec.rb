@@ -8,6 +8,10 @@ RSpec.describe Resonad do
       expect(subject).to be_success
     end
 
+    it 'does not indicate failure' do
+      expect(subject).not_to be_failure
+    end
+
     it 'contains a value' do
       expect(subject.value).to eq('hello')
     end
@@ -35,17 +39,33 @@ RSpec.describe Resonad do
       result = subject.flat_map{ |value| Resonad.Failure('boo') }
       expect(result.error).to eq('boo')
     end
+
+    specify '#on_success yields its value, and returns self' do
+      result = subject.on_success do |value|
+        expect(value).to eq('hello')
+      end
+      expect(result).to be(subject)
+    end
+
+    specify '#on_failure does not yield, and returns self' do
+      result = subject.on_failure { raise 'this should not be called' }
+      expect(result).to be(subject)
+    end
   end
 
   describe 'Failure' do
-    subject { Resonad.Failure(6) }
+    subject { Resonad.Failure(:buzz) }
 
-    it 'indicates failure' do
+    it 'does not indicate success' do
       expect(subject).not_to be_success
     end
 
+    it 'indicates failure' do
+      expect(subject).to be_failure
+    end
+
     it 'contains an error' do
-      expect(subject.error).to eq(6)
+      expect(subject.error).to eq(:buzz)
     end
 
     it 'does not contain a value' do
@@ -61,24 +81,17 @@ RSpec.describe Resonad do
       result = subject.map{ |value| fail }
       expect(result).to be(subject)
     end
-  end
 
-  describe Resonad::ConvenienceMethods do
-    class Harness
-      include Resonad::ConvenienceMethods
+    specify '#on_success does not yield, and returns self' do
+      result = subject.on_success { raise 'this should not be called' }
+      expect(result).to be(subject)
     end
 
-    subject { Harness.new }
-
-    it 'provides #failure? which is the opposite of #success?' do
-      expect(subject).to receive(:success?).and_return(true)
-      expect(subject.failure?).to be(false)
-    end
-
-    it 'provides #and_then - a nicer sounding alias for #flat_map' do
-      block = Proc.new { |x| x }
-      expect(subject).to receive(:flat_map).and_yield(5)
-      expect(subject.and_then(&block)).to eq(5)
+    specify '#on_failure yields the error, and returns self' do
+      result = subject.on_failure do |error|
+        expect(error).to eq(:buzz)
+      end
+      expect(result).to be(subject)
     end
   end
 end
