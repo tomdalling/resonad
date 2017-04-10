@@ -1,5 +1,14 @@
 # Resonad
 
+Usage example (assume each method returns a `Resonad`):
+
+```ruby
+find_widget(widget_id)
+  .and_then { |widget| update_widget(widget) }
+  .on_success { |widget| logger.info("Updated #{widget}" }
+  .on_failure { |error| logger.warn("Widget update failed because #{error}") }
+```
+
 Success type:
 
 ```ruby
