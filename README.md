@@ -1,41 +1,53 @@
 # Resonad
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/resonad`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Add this line to your application's Gemfile:
+Success type:
 
 ```ruby
-gem 'resonad'
+result = Resonad.Success(5)
+result.success? #=> true
+result.failure? #=> false
+result.value #=> 5
+result.error #=> raises an exception
 ```
 
-And then execute:
+Failure type:
 
-    $ bundle
+```ruby
+result = Resonad.Failure(:buzz)
+result.success? #=> false
+result.failure? #=> true
+result.value #=> raises an exception
+result.error #=> :buzz
+```
 
-Or install it yourself as:
+Mapping monads:
 
-    $ gem install resonad
+```ruby
+result = Resonad.Success(5)
+  .map { |i| i + 1 }
+  .map { |i| i + 1 }
+  .map { |i| i + 1 }
+result.success? #=> true
+result.value #=> 8
 
-## Usage
+result = Resonad.Failure(:buzz)
+  .map { |i| i + 1 }
+  .map { |i| i + 1 }
+  .map { |i| i + 1 }
+result.success? #=> false
+result.error #=> :buzz
+```
 
-TODO: Write usage instructions here
+Flat mapping monads (a.k.a. `and_then`):
 
-## Development
+```ruby
+result = Resonad.Success(5)
+  .and_then { |i| Resonad.Success(i + 1) }
+  .and_then { |i| Resonad.Failure("buzz #{i}") }
+  .and_then { |i| Resonad.Success(i + 1) }
+  .error #=> "buzz 6"
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/Tom Dalling/resonad. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
+# can also use the less-nice `flat_map` method
+result
+  .flat_map { |i| Resonad.Success(i + 1) }
+```
