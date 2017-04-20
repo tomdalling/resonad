@@ -30,14 +30,19 @@ RSpec.describe Resonad do
       expect(result).to be(subject)
     end
 
-    it 'can flat_map to a successful resonad' do
-      result = subject.flat_map{ |value| Resonad.Success(value + ' moto') }
-      expect(result.value).to eq('hello moto')
+    it "can be flat_map'd" do
+      result = subject.flat_map{ |value| value + ' moto' }
+      expect(result).to eq('hello moto')
     end
 
-    it 'can flat_map to a failure resonad' do
-      result = subject.flat_map{ |value| Resonad.Failure('boo') }
-      expect(result.error).to eq('boo')
+    it "can not be flat_map_error'd" do
+      result = subject.flat_map_error{ |error| fail('shouldnt run this') }
+      expect(result).to be(subject)
+    end
+
+    it 'wont map an error' do
+      result = subject.map_error { |error| fail('shouldnt run this') }
+      expect(result).to be(subject)
     end
 
     specify '#on_success yields its value, and returns self' do
@@ -77,9 +82,24 @@ RSpec.describe Resonad do
       expect(result).to be(subject)
     end
 
+    it 'can map the error' do
+      result = subject.map_error { |error| "Fizz #{error}" }
+      expect(result.error).to eq('Fizz buzz')
+    end
+
+    it 'is optimised when mapping the error results in no change' do
+      result = subject.map_error { |error| error }
+      expect(result).to be(subject)
+    end
+
     it "can not be flat_map'd" do
       result = subject.map{ |value| fail }
       expect(result).to be(subject)
+    end
+
+    it "can be flat_map_error'd" do
+      result = subject.flat_map_error{ |error| error.to_s }
+      expect(result).to eq('buzz')
     end
 
     specify '#on_success does not yield, and returns self' do

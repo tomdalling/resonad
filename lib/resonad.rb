@@ -40,18 +40,27 @@ module Resonad
     end
 
     def map
-      new_value = yield(@value)
-      if new_value.__id__ == @value.__id__
+      new_value = yield(value)
+      if new_value.__id__ == value.__id__
         self
       else
         self.class.new(new_value)
       end
     end
 
+    def map_error
+      self
+    end
+
     def flat_map
-      yield(@value)
+      yield value
     end
     alias_method :and_then, :flat_map
+
+    def flat_map_error
+      self
+    end
+    alias_method :or_else, :flat_map_error
   end
 
   class Failure
@@ -87,10 +96,24 @@ module Resonad
       self
     end
 
+    def map_error
+      new_error = yield(error)
+      if new_error.__id__ == error.__id__
+        self
+      else
+        self.class.new(new_error)
+      end
+    end
+
     def flat_map
       self
     end
     alias_method :and_then, :flat_map
+
+    def flat_map_error
+      yield error
+    end
+    alias_method :or_else, :flat_map_error
   end
 
 end
