@@ -1,5 +1,10 @@
-sudo: false
 language: ruby
 rvm:
   - 2.3.3
-before_install: gem install bundler -v 1.14.3
+cache: bundler
+deploy:
+  provider: rubygems
+  on:
+    tags: true
+  api_key:
+    secure: JPfhiLx7tDs9u4nXvVpQX041NHgZpTMTCAWqG52Us6pJIpDXl+nNzKaI0U/grucEE+OZQ8wfq/N3MV5uHHel+NzwVIVeJlouz3JiPXJUI60+tPvucLHe63LR/I3jzCWzHRLcwCYRo8mhh6jrq01KztgFRUxHzRTRodDcqFMi+xE=
