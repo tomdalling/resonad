@@ -60,3 +60,19 @@ result = Resonad.Success(5)
 result
   .flat_map { |i| Resonad.Success(i + 1) }
 ```
+
+Automatic exception rescuing:
+
+```ruby
+def try_divide(top, bottom)
+  Resonad.rescuing_from(ZeroDivisionError) { top / bottom }
+end
+
+yep = try_divide(6, 2)
+yep.success? #=> true
+yep.value #=> 3
+
+nope = try_divide(6, 0)
+nope.success? #=> false
+node.error #=> #<ZeroDivisionError: ZeroDivisionError>
+```

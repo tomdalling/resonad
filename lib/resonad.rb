@@ -10,6 +10,18 @@ module Resonad
     Failure.new(*args)
   end
 
+  def self.rescuing_from(*exception_classes)
+    Success(yield)
+  rescue Exception => e
+    if exception_classes.empty?
+      Failure(e) # rescue from all exceptions
+    elsif exception_classes.any? { |klass| e.is_a?(klass) }
+      Failure(e) # rescue from specified exception type
+    else
+      raise # reraise unhandled exception
+    end
+  end
+
   class Success
     attr_accessor :value
 
