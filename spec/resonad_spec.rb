@@ -17,7 +17,7 @@ RSpec.describe Resonad do
     end
 
     it 'does not contain an error' do
-      expect{ subject.error }.to raise_error(Resonad::NonExistantError)
+      expect{ subject.error }.to raise_error(Resonad::NonExistentError)
     end
 
     it 'can map the value' do
@@ -74,7 +74,7 @@ RSpec.describe Resonad do
     end
 
     it 'does not contain a value' do
-      expect{ subject.value }.to raise_error(Resonad::NonExistantValue)
+      expect{ subject.value }.to raise_error(Resonad::NonExistentValue)
     end
 
     it "can not be map'd" do

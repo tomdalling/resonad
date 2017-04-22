@@ -1,6 +1,6 @@
 module Resonad
-  class NonExistantError < StandardError; end
-  class NonExistantValue < StandardError; end
+  class NonExistentError < StandardError; end
+  class NonExistentValue < StandardError; end
 
   def self.Success(*args)
     Success.new(*args)
@@ -48,7 +48,7 @@ module Resonad
     end
 
     def error
-      raise NonExistantError, "Success resonads do not have errors"
+      raise NonExistentError, "Success resonads do not have errors"
     end
 
     def map
@@ -101,7 +101,7 @@ module Resonad
     end
 
     def value
-      raise NonExistantValue, "Failure resonads do no have values"
+      raise NonExistentValue, "Failure resonads do no have values"
     end
 
     def map
