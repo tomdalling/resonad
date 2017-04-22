@@ -9,6 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['tom' + '@' + 'tomdalling.com']
 
   spec.summary       = "Objects that represent success or failure"
+  spec.description   = "Objects that represent success or failure"
   spec.homepage      = "https://github.com/tomdalling/resonad"
   spec.license       = "MIT"
 
