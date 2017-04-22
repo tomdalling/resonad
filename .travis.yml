@@ -8,5 +8,6 @@ deploy:
   provider: rubygems
   on:
     tags: true
+    rvm: 2.4.1
   api_key:
     secure: JPfhiLx7tDs9u4nXvVpQX041NHgZpTMTCAWqG52Us6pJIpDXl+nNzKaI0U/grucEE+OZQ8wfq/N3MV5uHHel+NzwVIVeJlouz3JiPXJUI60+tPvucLHe63LR/I3jzCWzHRLcwCYRo8mhh6jrq01KztgFRUxHzRTRodDcqFMi+xE=
