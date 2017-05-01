@@ -1,28 +1,19 @@
-module Resonad
+class Resonad
   class NonExistentError < StandardError; end
   class NonExistentValue < StandardError; end
 
-  def self.Success(*args)
-    Success.new(*args)
-  end
+  module Mixin
+    def Success(*args)
+      ::Resonad::Success.new(*args)
+    end
 
-  def self.Failure(*args)
-    Failure.new(*args)
-  end
-
-  def self.rescuing_from(*exception_classes)
-    Success(yield)
-  rescue Exception => e
-    if exception_classes.empty?
-      Failure(e) # rescue from all exceptions
-    elsif exception_classes.any? { |klass| e.is_a?(klass) }
-      Failure(e) # rescue from specified exception type
-    else
-      raise # reraise unhandled exception
+    def Failure(*args)
+      ::Resonad::Failure.new(*args)
     end
   end
+  extend Mixin
 
-  class Success
+  class Success < Resonad
     attr_accessor :value
 
     def initialize(value)
@@ -32,10 +23,6 @@ module Resonad
 
     def success?
       true
-    end
-
-    def failure?
-      false
     end
 
     def on_success
@@ -67,15 +54,13 @@ module Resonad
     def flat_map
       yield value
     end
-    alias_method :and_then, :flat_map
 
     def flat_map_error
       self
     end
-    alias_method :or_else, :flat_map_error
   end
 
-  class Failure
+  class Failure < Resonad
     attr_accessor :error
 
     def initialize(error)
@@ -85,10 +70,6 @@ module Resonad
 
     def success?
       false
-    end
-
-    def failure?
-      true
     end
 
     def on_success
@@ -120,12 +101,44 @@ module Resonad
     def flat_map
       self
     end
-    alias_method :and_then, :flat_map
 
     def flat_map_error
       yield error
     end
-    alias_method :or_else, :flat_map_error
   end
+
+  def self.rescuing_from(*exception_classes)
+    Success(yield)
+  rescue Exception => e
+    if exception_classes.empty?
+      Failure(e) # rescue from all exceptions
+    elsif exception_classes.any? { |klass| e.is_a?(klass) }
+      Failure(e) # rescue from specified exception type
+    else
+      raise # reraise unhandled exception
+    end
+  end
+
+  def initialize(*args)
+    raise NotImplementedError, "This is an abstract class. Use Resonad::Success or Resonad::Failure instead."
+  end
+
+  def success?
+    raise NotImplementedError, "should be implemented in subclass"
+  end
+
+  def failure?
+    not success?
+  end
+
+  def flat_map
+    raise NotImplementedError, "should be implemented in subclass"
+  end
+  alias_method :and_then, :flat_map
+
+  def flat_map_error
+    raise NotImplementedError, "should be implemented in subclass"
+  end
+  alias_method :or_else, :flat_map_error
 
 end

@@ -150,4 +150,22 @@ RSpec.describe Resonad do
       expect(result.error).to be_a(ArgumentError)
     end
   end
+
+  describe Resonad::Mixin do
+    module MixinHost
+      extend Resonad::Mixin
+    end
+
+    it 'has a Success constructor' do
+      result = MixinHost.Success(5)
+      expect(result).to be_a(Resonad::Success)
+      expect(result.value).to eq(5)
+    end
+
+    it 'has a Failure constructor' do
+      result = MixinHost.Failure(:buzz)
+      expect(result).to be_a(Resonad::Failure)
+      expect(result.error).to eq(:buzz)
+    end
+  end
 end
