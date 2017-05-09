@@ -134,11 +134,11 @@ class Resonad
   def flat_map
     raise NotImplementedError, "should be implemented in subclass"
   end
-  alias_method :and_then, :flat_map
+  def and_then(&block); flat_map(&block); end
 
   def flat_map_error
     raise NotImplementedError, "should be implemented in subclass"
   end
-  alias_method :or_else, :flat_map_error
+  def or_else(&block); flat_map_error(&block); end
 
 end

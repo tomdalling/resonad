@@ -1,6 +1,9 @@
 require "spec_helper"
 
 RSpec.describe Resonad do
+  AND_THEN_ALIASES = [:and_then, :flat_map]
+  OR_ELSE_ALIASES = [:or_else, :flat_map_error]
+
   describe 'Success' do
     subject { Resonad.Success('hello') }
 
@@ -30,14 +33,18 @@ RSpec.describe Resonad do
       expect(result).to be(subject)
     end
 
-    it "can be flat_map'd" do
-      result = subject.flat_map{ |value| value + ' moto' }
-      expect(result).to eq('hello moto')
+    AND_THEN_ALIASES.each do |method|
+      it "can be #{method}'d" do
+        result = subject.send(method){ |value| value + ' moto' }
+        expect(result).to eq('hello moto')
+      end
     end
 
-    it "can not be flat_map_error'd" do
-      result = subject.flat_map_error{ |error| fail('shouldnt run this') }
-      expect(result).to be(subject)
+    OR_ELSE_ALIASES.each do |method|
+      it "can not be #{method}'d" do
+        result = subject.send(method){ |error| fail('shouldnt run this') }
+        expect(result).to be(subject)
+      end
     end
 
     it 'wont map an error' do
@@ -92,14 +99,18 @@ RSpec.describe Resonad do
       expect(result).to be(subject)
     end
 
-    it "can not be flat_map'd" do
-      result = subject.map{ |value| fail }
-      expect(result).to be(subject)
+    AND_THEN_ALIASES.each do |method|
+      it "can not be #{method}'d" do
+        result = subject.send(method){ |value| fail }
+        expect(result).to be(subject)
+      end
     end
 
-    it "can be flat_map_error'd" do
-      result = subject.flat_map_error{ |error| error.to_s }
-      expect(result).to eq('buzz')
+    OR_ELSE_ALIASES.each do |method|
+      it "can be #{method}'d" do
+        result = subject.flat_map_error{ |error| error.to_s }
+        expect(result).to eq('buzz')
+      end
     end
 
     specify '#on_success does not yield, and returns self' do
