@@ -188,5 +188,19 @@ RSpec.describe Resonad do
       expect(result).to be_a(Resonad::Failure)
       expect(result.error).to eq(:buzz)
     end
+
+    describe 'default nil value optimisation' do
+      specify '#Success' do
+        result = Resonad.Success
+        expect(result.value).to be_nil
+        expect(result).to be(Resonad.Success)
+      end
+
+      specify '#Failure' do
+        result = Resonad.Failure
+        expect(result.error).to be_nil
+        expect(result).to be(Resonad.Failure)
+      end
+    end
   end
 end

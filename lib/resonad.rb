@@ -3,12 +3,20 @@ class Resonad
   class NonExistentValue < StandardError; end
 
   module Mixin
-    def Success(*args)
-      ::Resonad::Success.new(*args)
+    def Success(value=nil)
+      if nil == value
+        NIL_SUCCESS
+      else
+        Success.new(value)
+      end
     end
 
-    def Failure(*args)
-      ::Resonad::Failure.new(*args)
+    def Failure(error=nil)
+      if nil == error
+        NIL_FAILURE
+      else
+        Failure.new(error)
+      end
     end
   end
   extend Mixin
@@ -145,4 +153,6 @@ class Resonad
   end
   def or_else(&block); flat_map_error(&block); end
 
+  NIL_SUCCESS = Success.new(nil)
+  NIL_FAILURE = Failure.new(nil)
 end
