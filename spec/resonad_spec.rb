@@ -3,16 +3,22 @@ require "spec_helper"
 RSpec.describe Resonad do
   AND_THEN_ALIASES = [:and_then, :flat_map]
   OR_ELSE_ALIASES = [:or_else, :flat_map_error]
+  SUCCESS_ALIASES = [:success?, :successful?, :ok?]
+  FAILURE_ALIASES = [:failure?, :failed?, :bad?]
 
   describe 'Success' do
     subject { Resonad.Success('hello') }
 
-    it 'indicates success' do
-      expect(subject).to be_success
+    SUCCESS_ALIASES.each do |method|
+      it "##{method} indicates success" do
+        expect(subject.send(method)).to be(true)
+      end
     end
 
-    it 'does not indicate failure' do
-      expect(subject).not_to be_failure
+    FAILURE_ALIASES.each do |method|
+      it "##{method} does not indicate failure" do
+        expect(subject.send(method)).to be(false)
+      end
     end
 
     it 'contains a value' do
@@ -68,12 +74,16 @@ RSpec.describe Resonad do
   describe 'Failure' do
     subject { Resonad.Failure(:buzz) }
 
-    it 'does not indicate success' do
-      expect(subject).not_to be_success
+    SUCCESS_ALIASES.each do |method|
+      it "##{method} does not indicate success" do
+        expect(subject.send(method)).to be(false)
+      end
     end
 
-    it 'indicates failure' do
-      expect(subject).to be_failure
+    FAILURE_ALIASES.each do |method|
+      it "##{method} indicates failure" do
+        expect(subject.send(method)).to be(true)
+      end
     end
 
     it 'contains an error' do
