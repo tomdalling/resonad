@@ -1,15 +1,24 @@
 # Resonad
 
-Usage example (assume each method returns a `Resonad`):
+Lightweight, monadic "result" objects that can be used instead of exceptions.
+
+Read: [Result Objects - Errors Without Exceptions](https://www.rubypigeon.com/posts/result-objects-errors-without-exceptions/)
+
+## Typical Usage Example
+
+Assuming each method returns a `Resonad` (Ruby 2.7 syntax):
 
 ```ruby
 find_widget(widget_id)
-  .and_then { |widget| update_widget(widget) }
-  .on_success { |widget| logger.info("Updated #{widget}" }
-  .on_failure { |error| logger.warn("Widget update failed because #{error}") }
+  .and_then { update_widget(_1) }
+  .on_success { logger.info("Updated #{_1}" }
+  .on_failure { logger.warn("Widget update failed because #{_1}") }
 ```
 
-Success type:
+## Success Type
+
+A value that represents success. Wraps a `value` that can be any arbitrary
+object.
 
 ```ruby
 result = Resonad.Success(5)
@@ -19,7 +28,10 @@ result.value #=> 5
 result.error #=> raises an exception
 ```
 
-Failure type:
+## Failure Type
+
+A value that represents a failure. Wraps an `error` that can be any arbitrary
+object.
 
 ```ruby
 result = Resonad.Failure(:buzz)
@@ -29,39 +41,53 @@ result.value #=> raises an exception
 result.error #=> :buzz
 ```
 
-Mapping monads:
+## Mapping
+
+Non-destructive update for the `value` of a `Success` object. Does nothing to
+`Failure` objects.
+
+The block takes the `value` as an argument, and returns the new `value`.
 
 ```ruby
 result = Resonad.Success(5)
-  .map { |i| i + 1 }
-  .map { |i| i + 1 }
-  .map { |i| i + 1 }
+  .map { _1 + 1 }  # 5 + 1 -> 6
+  .map { _1 + 1 }  # 6 + 1 -> 7
+  .map { _1 + 1 }  # 7 + 1 -> 8
 result.success? #=> true
 result.value #=> 8
 
 result = Resonad.Failure(:buzz)
-  .map { |i| i + 1 }
-  .map { |i| i + 1 }
-  .map { |i| i + 1 }
+  .map { _1 + 1 }  # not run
+  .map { _1 + 1 }  # not run
+  .map { _1 + 1 }  # not run
 result.success? #=> false
 result.error #=> :buzz
 ```
 
-Flat mapping monads (a.k.a. `and_then`):
+## Flat Mapping (a.k.a. `and_then`)
+
+Non-destructive update for a `Success` object. Either turns it into another
+`Success` (can have a different `value`), or turns it into a `Failure`. Does
+nothing to `Failure` objects.
+
+The block takes the `value` as an argument, and returns a `Resonad` (either
+`Success` or `Failure`). 
 
 ```ruby
 result = Resonad.Success(5)
-  .and_then { |i| Resonad.Success(i + 1) }
-  .and_then { |i| Resonad.Failure("buzz #{i}") }
-  .and_then { |i| Resonad.Success(i + 1) }
+  .and_then { Resonad.Success(_1 + 1) }  # updates to Success(6)
+  .and_then { Resonad.Failure("buzz #{_1}") }  # updates to Failure("buzz 6")
+  .and_then { Resonad.Success(_1 + 1) }  # not run (because it's a failure)
   .error #=> "buzz 6"
 
-# can also use the less-nice `flat_map` method
-result
-  .flat_map { |i| Resonad.Success(i + 1) }
+# also has a less-friendly but more-technically-descriptive alias: `flat_map`
+result.flat_map { Resonad.Success(_1 + 1) }
 ```
 
-Automatic exception rescuing:
+## Automatic Exception Rescuing
+
+If no exception is raised, wraps the block's return value in `Success`. If an
+exception is raised, wraps the exception object in `Failure`.
 
 ```ruby
 def try_divide(top, bottom)
