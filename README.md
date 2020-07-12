@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tomdalling/resonad.svg?branch=master)](https://travis-ci.org/tomdalling/resonad)
+
 # Resonad
 
 Lightweight, monadic "result" objects that can be used instead of exceptions.
