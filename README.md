@@ -69,6 +69,8 @@ result.error #=> :buzz
 
 ## Aliases
 
+Lots of the Resonad methods have aliases.
+
 Personally, I can never remember if it's `success?` or `successful?` or `ok?`,
 so let's just do it the Ruby way and allow all of them.
 
@@ -91,6 +93,7 @@ result.flat_map { Resonad.Success(_1 + 1) }  #=> Success(6)
 
 # error flat mapping aliases
 result.or_else { Resonad.Failure(_1 + 1) }  # not run
+result.otherwise { Resonad.Failure(_1 + 1) }  # not run
 result.flat_map_error { Resonad.Success(_1 + 1) }  # not run
 ```
 
@@ -212,7 +215,6 @@ end
 
 ## TODO
 
- - "otherwise" alias for "or_else"
  - "map_value" alias for "map"
  - "Resonad::Success[5]" alias for "Resonad.Success(5)"
  - aliases for "on_success" and "on_failure"

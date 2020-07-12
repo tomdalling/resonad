@@ -152,6 +152,7 @@ class Resonad
     raise NotImplementedError, "should be implemented in subclass"
   end
   def or_else(&block); flat_map_error(&block); end
+  def otherwise(&block); flat_map_error(&block); end
 
   NIL_SUCCESS = Success.new(nil)
   NIL_FAILURE = Failure.new(nil)

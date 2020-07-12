@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe Resonad do
   AND_THEN_ALIASES = [:and_then, :flat_map]
-  OR_ELSE_ALIASES = [:or_else, :flat_map_error]
+  OR_ELSE_ALIASES = [:or_else, :otherwise, :flat_map_error]
   SUCCESS_ALIASES = [:success?, :successful?, :ok?]
   FAILURE_ALIASES = [:failure?, :failed?, :bad?]
 
