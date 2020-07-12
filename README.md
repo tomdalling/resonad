@@ -203,6 +203,35 @@ do_step_1
 There are lots of aliases for these methods. See the "Aliases" section above.
 
 
+## Pattern Matching Support
+
+If you are using Ruby 2.7 or later, you can pattern match on Resonad objects.
+For example:
+
+```ruby
+case result
+in { value: }  # match any Success
+  puts value
+in { error: :not_found } # match Failure(:not_found)
+  puts "Thing not found"
+in { error: String => msg } # match any Failure with a String error
+  puts "Failed to fetch thing because #{msg}"
+in { error: } # match any Failure
+  raise "Unhandled error: #{error.inspect}"
+end
+```
+
+`Resonad.Success(5)` deconstructs to:
+
+ - Hash: `{ value: 5 }`
+ - Array: `[:success, 5]`
+
+And `Resonad.Failure('yikes')` deconstructs to:
+
+ - Hash: `{ error: 'yikes' }`
+ - Array: `[:failure, 'yikes']`
+
+
 ## Automatic Exception Rescuing
 
 If no exception is raised, wraps the block's return value in `Success`. If an

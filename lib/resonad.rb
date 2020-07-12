@@ -55,6 +55,14 @@ class Resonad
     def flat_map_error
       self
     end
+
+    def deconstruct
+      [:success, value]
+    end
+
+    def deconstruct_keys(_)
+      { value: value }
+    end
   end
 
   class Failure < Resonad
@@ -109,6 +117,14 @@ class Resonad
 
     def flat_map_error
       yield error
+    end
+
+    def deconstruct
+      [:failure, error]
+    end
+
+    def deconstruct_keys(_)
+      { error: error }
     end
   end
 
