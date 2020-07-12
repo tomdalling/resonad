@@ -28,15 +28,15 @@ RSpec.describe Resonad do
       expect(alternate.value).to be(subject.value)
     end
 
-    SUCCESS_ALIASES.each do |method|
-      it "##{method} indicates success" do
-        expect(subject.send(method)).to be(true)
+    SUCCESS_ALIASES.each do |success|
+      specify "##{success} indicates success" do
+        expect(subject.public_send(success)).to be(true)
       end
     end
 
-    FAILURE_ALIASES.each do |method|
-      it "##{method} does not indicate failure" do
-        expect(subject.send(method)).to be(false)
+    FAILURE_ALIASES.each do |failure|
+      specify "##{failure} does not indicate failure" do
+        expect(subject.public_send(failure)).to be(false)
       end
     end
 
@@ -48,28 +48,28 @@ RSpec.describe Resonad do
       expect{ subject.error }.to raise_error(Resonad::NonExistentError)
     end
 
-    MAP_ALIASES.each do |method|
-      specify "##{method} maps the value" do
-        result = subject.public_send(method) { |value| value + ' world' }
+    MAP_ALIASES.each do |map|
+      specify "##{map} maps the value" do
+        result = subject.public_send(map) { |value| value + ' world' }
         expect(result.value).to eq('hello world')
       end
 
-      specify "##{method} is optimised when mapping to the same value" do
-        result = subject.public_send(method) { |value| value }
+      specify "##{map} is optimised when mapping to the same value" do
+        result = subject.public_send(map) { |value| value }
         expect(result).to be(subject)
       end
     end
 
-    AND_THEN_ALIASES.each do |method|
-      it "can be #{method}'d" do
-        result = subject.send(method){ |value| value + ' moto' }
+    AND_THEN_ALIASES.each do |and_then|
+      it "can be #{and_then}'d" do
+        result = subject.public_send(and_then){ |value| value + ' moto' }
         expect(result).to eq('hello moto')
       end
     end
 
-    OR_ELSE_ALIASES.each do |method|
-      it "can not be #{method}'d" do
-        result = subject.send(method){ |error| fail('shouldnt run this') }
+    OR_ELSE_ALIASES.each do |or_else|
+      it "can not be #{or_else}'d" do
+        result = subject.public_send(or_else){ |error| fail('shouldnt run this') }
         expect(result).to be(subject)
       end
     end
@@ -79,18 +79,18 @@ RSpec.describe Resonad do
       expect(result).to be(subject)
     end
 
-    ON_SUCCESS_ALIASES.each do |method|
-      specify "##{method} yields its value, and returns self" do
-        result = subject.public_send(method) do |value|
+    ON_SUCCESS_ALIASES.each do |on_success|
+      specify "##{on_success} yields its value, and returns self" do
+        result = subject.public_send(on_success) do |value|
           expect(value).to eq('hello')
         end
         expect(result).to be(subject)
       end
     end
 
-    ON_FAILURE_ALIASES.each do |method|
-      specify "##{method} does not yield, and returns self" do
-        result = subject.public_send(method) { raise 'this should not be called' }
+    ON_FAILURE_ALIASES.each do |on_failure|
+      specify "##{on_failure} does not yield, and returns self" do
+        result = subject.public_send(on_failure) { raise 'this should not be called' }
         expect(result).to be(subject)
       end
     end
@@ -111,15 +111,15 @@ RSpec.describe Resonad do
       expect(alternate.error).to be(subject.error)
     end
 
-    SUCCESS_ALIASES.each do |method|
-      it "##{method} does not indicate success" do
-        expect(subject.send(method)).to be(false)
+    SUCCESS_ALIASES.each do |success|
+      specify "##{success} does not indicate success" do
+        expect(subject.public_send(success)).to be(false)
       end
     end
 
-    FAILURE_ALIASES.each do |method|
-      it "##{method} indicates failure" do
-        expect(subject.send(method)).to be(true)
+    FAILURE_ALIASES.each do |failure|
+      specify "##{failure} indicates failure" do
+        expect(subject.public_send(failure)).to be(true)
       end
     end
 
@@ -131,9 +131,9 @@ RSpec.describe Resonad do
       expect{ subject.value }.to raise_error(Resonad::NonExistentValue)
     end
 
-    MAP_ALIASES.each do |method|
-      specify "##{method} does nothing" do
-        result = subject.public_send(method) { |value| fail }
+    MAP_ALIASES.each do |map|
+      specify "##{map} does nothing" do
+        result = subject.public_send(map) { |value| fail }
         expect(result).to be(subject)
       end
     end
@@ -148,30 +148,30 @@ RSpec.describe Resonad do
       expect(result).to be(subject)
     end
 
-    AND_THEN_ALIASES.each do |method|
-      it "can not be #{method}'d" do
-        result = subject.send(method){ |value| fail }
+    AND_THEN_ALIASES.each do |and_then|
+      it "can not be #{and_then}'d" do
+        result = subject.public_send(and_then){ |value| fail }
         expect(result).to be(subject)
       end
     end
 
-    OR_ELSE_ALIASES.each do |method|
-      it "can be #{method}'d" do
+    OR_ELSE_ALIASES.each do |or_else|
+      it "can be #{or_else}'d" do
         result = subject.flat_map_error{ |error| error.to_s }
         expect(result).to eq('buzz')
       end
     end
 
-    ON_SUCCESS_ALIASES.each do |method|
-      specify "##{method} does not yield, and returns self" do
-        result = subject.public_send(method) { raise 'this should not be called' }
+    ON_SUCCESS_ALIASES.each do |on_success|
+      specify "##{on_success} does not yield, and returns self" do
+        result = subject.public_send(on_success) { raise 'this should not be called' }
         expect(result).to be(subject)
       end
     end
 
-    ON_FAILURE_ALIASES.each do |method|
-      specify "##{method} yields the error, and returns self" do
-        result = subject.public_send(method) do |error|
+    ON_FAILURE_ALIASES.each do |on_failure|
+      specify "##{on_failure} yields the error, and returns self" do
+        result = subject.public_send(on_failure) do |error|
           expect(error).to eq(:buzz)
         end
         expect(result).to be(subject)
