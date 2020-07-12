@@ -10,6 +10,18 @@ RSpec.describe Resonad do
   describe 'Success' do
     subject { Resonad.Success('hello') }
 
+    it "has an alternate, more-standardly-named constructor method" do
+      alternate = Resonad.success(subject.value)
+      expect(alternate.class).to be(subject.class)
+      expect(alternate.value).to be(subject.value)
+    end
+
+    it "has an alternate class constructor method" do
+      alternate = Resonad::Success[subject.value]
+      expect(alternate.class).to be(subject.class)
+      expect(alternate.value).to be(subject.value)
+    end
+
     SUCCESS_ALIASES.each do |method|
       it "##{method} indicates success" do
         expect(subject.send(method)).to be(true)
@@ -76,6 +88,18 @@ RSpec.describe Resonad do
 
   describe 'Failure' do
     subject { Resonad.Failure(:buzz) }
+
+    it "has an alternate, more-standardly-named constructor method" do
+      alternate = Resonad.failure(subject.error)
+      expect(alternate.class).to be(subject.class)
+      expect(alternate.error).to be(subject.error)
+    end
+
+    it "has an alternate class constructor method" do
+      alternate = Resonad::Failure[subject.error]
+      expect(alternate.class).to be(subject.class)
+      expect(alternate.error).to be(subject.error)
+    end
 
     SUCCESS_ALIASES.each do |method|
       it "##{method} does not indicate success" do

@@ -75,7 +75,10 @@ Personally, I can never remember if it's `success?` or `successful?` or `ok?`,
 so let's just do it the Ruby way and allow all of them.
 
 ```ruby
+# object creation aliases (same for failure)
 result = Resonad.Success(5)
+result = Resonad.success(5)  # lowercase, for those offended by capital letters
+result = Resonad::Success[5]  # class constructor method
 
 # success aliases
 result.success?  #=> true
@@ -219,6 +222,5 @@ end
 
 ## TODO
 
- - "Resonad::Success[5]" alias for "Resonad.Success(5)"
  - aliases for "on_success" and "on_failure"
 
