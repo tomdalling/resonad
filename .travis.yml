@@ -1,13 +1,24 @@
 language: ruby
+
+# test old rubies
 rvm:
-- 2.2.7
-- 2.3.4
-- 2.4.1
-cache: bundler
+  - 2.2.10
+  - 2.3.8
+  - 2.4.10
+  - 2.5.8
+  - 2.6.6
+
+# test on latest ruby
+matrix:
+  include:
+    - rvm: 2.7.1
+      env: LATEST_RUBY=true
+
+# Rubygems deployment
 deploy:
   provider: rubygems
   on:
     tags: true
-    rvm: 2.4.1
+    condition: $LATEST_RUBY = true
   api_key:
     secure: 0+R2SaUaKOZE0U4FwHiC/0DLepizJ1anjfvFEWk5pYVkaZl6HuaSYq50g8ff4VqXBH955Y5W7tFI8gfg4ZY9jrivHyEZT9Yoz3PFFPxcqSdVbDsV12RQt7ZjzW0HbvUhFu9nlrVACfFsLt4WFG61pyhXvewghp1p4JBp2UxeTk1kyL7U+wfWsp1RpcKiHkaLBeWJ0N87j4QkhTfcWlModLqN/19ATigvfyDjrwerkTescVmQi4TzfAiwkeAiDgUB32FkwJjbX9RfIko33CsuctuDRU/HT+RWiXcGAxdHZx4dtQpP9pAiNTVxXdIq+QAvitekIah70pdCTNKrOh3tDj3kglkUK23MqU6kdeXjmUn9r4SuzHCX0sVf16UpfnwuryDDPlG1ISY+mf7BARr/wNQWuAD4MA4kWiPGMqT/0uoysbY7dt44lkO9NV7HBbqs2shqqMtmgPgDoJ+SGTXo8LvrjuL0jHB2/MoHziiqWDKLQ9PS2Fcqp/06d5u8GcSRt7dcgo2rvwnMwRdUW6iCV0zQgzrNccWn/SsJROtgzEIkuLJYO0GIOCgNBJ0euorWqQBEEPniltwh5StSgH2bL5khdPxiI+LhsL7UDhWGiNFl5tlQp8Ob98WmmQ39ZyVAGKlJoe2rdE/IaDVfysVvQV5XzYUVRn4ZKftwubo5Zvw=
