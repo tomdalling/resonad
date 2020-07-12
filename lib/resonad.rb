@@ -143,6 +143,11 @@ class Resonad
   def failed?; failure?; end
   def bad?; failure?; end
 
+  def map(&block)
+    raise NotImplementedError, "should be implemented in subclass"
+  end
+  def map_value(&block); map(&block); end
+
   def flat_map
     raise NotImplementedError, "should be implemented in subclass"
   end

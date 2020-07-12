@@ -5,6 +5,7 @@ RSpec.describe Resonad do
   OR_ELSE_ALIASES = [:or_else, :otherwise, :flat_map_error]
   SUCCESS_ALIASES = [:success?, :successful?, :ok?]
   FAILURE_ALIASES = [:failure?, :failed?, :bad?]
+  MAP_ALIASES = [:map, :map_value]
 
   describe 'Success' do
     subject { Resonad.Success('hello') }
@@ -29,14 +30,16 @@ RSpec.describe Resonad do
       expect{ subject.error }.to raise_error(Resonad::NonExistentError)
     end
 
-    it 'can map the value' do
-      result = subject.map { |value| value + ' world' }
-      expect(result.value).to eq('hello world')
-    end
+    MAP_ALIASES.each do |method|
+      specify "##{method} maps the value" do
+        result = subject.public_send(method) { |value| value + ' world' }
+        expect(result.value).to eq('hello world')
+      end
 
-    it 'is optimised when mapping to the same value' do
-      result = subject.map{ |value| value }
-      expect(result).to be(subject)
+      specify "##{method} is optimised when mapping to the same value" do
+        result = subject.public_send(method) { |value| value }
+        expect(result).to be(subject)
+      end
     end
 
     AND_THEN_ALIASES.each do |method|
@@ -94,9 +97,11 @@ RSpec.describe Resonad do
       expect{ subject.value }.to raise_error(Resonad::NonExistentValue)
     end
 
-    it "can not be map'd" do
-      result = subject.map { |value| fail }
-      expect(result).to be(subject)
+    MAP_ALIASES.each do |method|
+      specify "##{method} does nothing" do
+        result = subject.public_send(method) { |value| fail }
+        expect(result).to be(subject)
+      end
     end
 
     it 'can map the error' do

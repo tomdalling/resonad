@@ -87,6 +87,10 @@ result.failure?  #=> false
 result.failed?  #=> false
 result.bad?  #=> false
 
+# mapping aliases
+result.map { _1 + 1 }  #=> Success(6)
+result.map_value { _1 + 1 }  #=> Success(6)
+
 # flat mapping aliases
 result.and_then { Resonad.Success(_1 + 1) }  #=> Success(6)
 result.flat_map { Resonad.Success(_1 + 1) }  #=> Success(6)
@@ -215,7 +219,6 @@ end
 
 ## TODO
 
- - "map_value" alias for "map"
  - "Resonad::Success[5]" alias for "Resonad.Success(5)"
  - aliases for "on_success" and "on_failure"
 
