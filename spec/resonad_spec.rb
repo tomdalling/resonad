@@ -7,6 +7,12 @@ RSpec.describe Resonad do
   FAILURE_ALIASES = [:failure?, :failed?, :bad?]
   MAP_ALIASES = [:map, :map_value]
 
+  ON_PREFIXES = ["on_", "if_", "when_"]
+  ON_SUCCESS_SUFFIXES = SUCCESS_ALIASES.map { |m| m.to_s.chomp('?') }
+  ON_FAILURE_SUFFIXES = FAILURE_ALIASES.map { |m| m.to_s.chomp('?') }
+  ON_SUCCESS_ALIASES = ON_PREFIXES.product(ON_SUCCESS_SUFFIXES).map(&:join)
+  ON_FAILURE_ALIASES = ON_PREFIXES.product(ON_FAILURE_SUFFIXES).map(&:join)
+
   describe 'Success' do
     subject { Resonad.Success('hello') }
 
@@ -73,16 +79,20 @@ RSpec.describe Resonad do
       expect(result).to be(subject)
     end
 
-    specify '#on_success yields its value, and returns self' do
-      result = subject.on_success do |value|
-        expect(value).to eq('hello')
+    ON_SUCCESS_ALIASES.each do |method|
+      specify "##{method} yields its value, and returns self" do
+        result = subject.public_send(method) do |value|
+          expect(value).to eq('hello')
+        end
+        expect(result).to be(subject)
       end
-      expect(result).to be(subject)
     end
 
-    specify '#on_failure does not yield, and returns self' do
-      result = subject.on_failure { raise 'this should not be called' }
-      expect(result).to be(subject)
+    ON_FAILURE_ALIASES.each do |method|
+      specify "##{method} does not yield, and returns self" do
+        result = subject.public_send(method) { raise 'this should not be called' }
+        expect(result).to be(subject)
+      end
     end
   end
 
@@ -152,16 +162,20 @@ RSpec.describe Resonad do
       end
     end
 
-    specify '#on_success does not yield, and returns self' do
-      result = subject.on_success { raise 'this should not be called' }
-      expect(result).to be(subject)
+    ON_SUCCESS_ALIASES.each do |method|
+      specify "##{method} does not yield, and returns self" do
+        result = subject.public_send(method) { raise 'this should not be called' }
+        expect(result).to be(subject)
+      end
     end
 
-    specify '#on_failure yields the error, and returns self' do
-      result = subject.on_failure do |error|
-        expect(error).to eq(:buzz)
+    ON_FAILURE_ALIASES.each do |method|
+      specify "##{method} yields the error, and returns self" do
+        result = subject.public_send(method) do |error|
+          expect(error).to eq(:buzz)
+        end
+        expect(result).to be(subject)
       end
-      expect(result).to be(subject)
     end
   end
 

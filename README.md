@@ -75,33 +75,54 @@ Personally, I can never remember if it's `success?` or `successful?` or `ok?`,
 so let's just do it the Ruby way and allow all of them.
 
 ```ruby
-# object creation aliases (same for failure)
+# >>> object creation aliases (same for failure) <<<
 result = Resonad.Success(5)
 result = Resonad.success(5)  # lowercase, for those offended by capital letters
 result = Resonad::Success[5]  # class constructor method
 
-# success aliases
+# >>> success aliases <<<
 result.success?  #=> true
 result.successful?  #=> true
 result.ok?  #=> true
 
-# failure aliases
+# >>> failure aliases <<<
 result.failure?  #=> false
 result.failed?  #=> false
 result.bad?  #=> false
 
-# mapping aliases
+# >>> mapping aliases <<<
 result.map { _1 + 1 }  #=> Success(6)
 result.map_value { _1 + 1 }  #=> Success(6)
 
-# flat mapping aliases
+# >>> flat mapping aliases <<<
 result.and_then { Resonad.Success(_1 + 1) }  #=> Success(6)
 result.flat_map { Resonad.Success(_1 + 1) }  #=> Success(6)
 
-# error flat mapping aliases
+# >>> error flat mapping aliases <<<
 result.or_else { Resonad.Failure(_1 + 1) }  # not run
 result.otherwise { Resonad.Failure(_1 + 1) }  # not run
 result.flat_map_error { Resonad.Success(_1 + 1) }  # not run
+
+# >>> conditional tap aliases <<<
+# pattern: (on_|if_|when_)(success_alias|failure_alias)
+result.on_success { puts "hi" }  # outputs "hi"
+result.if_success { puts "hi" }  # outputs "hi"
+result.when_success { puts "hi" }  # outputs "hi"
+result.on_ok { puts "hi" }  # outputs "hi"
+result.if_ok { puts "hi" }  # outputs "hi"
+result.when_ok { puts "hi" }  # outputs "hi"
+result.on_successful { puts "hi" }  # outputs "hi"
+result.if_successful { puts "hi" }  # outputs "hi"
+result.when_successful { puts "hi" }  # outputs "hi"
+result.on_failure { puts "hi" }  # not run
+result.if_failure { puts "hi" }  # not run
+result.when_failure { puts "hi" }  # not run
+result.on_bad { puts "hi" }  # not run
+result.if_bad { puts "hi" }  # not run
+result.when_bad { puts "hi" }  # not run
+result.on_failed { puts "hi" }  # not run
+result.if_failed { puts "hi" }  # not run
+result.when_failed { puts "hi" }  # not run
 ```
 
 
@@ -218,9 +239,3 @@ class SpiceOfLife
   end
 end
 ```
-
-
-## TODO
-
- - aliases for "on_success" and "on_failure"
-

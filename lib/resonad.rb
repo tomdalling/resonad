@@ -164,6 +164,30 @@ class Resonad
   def or_else(&block); flat_map_error(&block); end
   def otherwise(&block); flat_map_error(&block); end
 
+  def on_success(&block)
+    raise NotImplementedError, "should be implemented in subclass"
+  end
+  def if_success(&block); on_success(&block); end
+  def when_success(&block); on_success(&block); end
+  def on_ok(&block); on_success(&block); end
+  def if_ok(&block); on_success(&block); end
+  def when_ok(&block); on_success(&block); end
+  def on_successful(&block); on_success(&block); end
+  def if_successful(&block); on_success(&block); end
+  def when_successful(&block); on_success(&block); end
+
+  def on_failure(&block)
+    raise NotImplementedError, "should be implemented in subclass"
+  end
+  def if_failure(&block); on_failure(&block); end
+  def when_failure(&block); on_failure(&block); end
+  def on_bad(&block); on_failure(&block); end
+  def if_bad(&block); on_failure(&block); end
+  def when_bad(&block); on_failure(&block); end
+  def on_failed(&block); on_failure(&block); end
+  def if_failed(&block); on_failure(&block); end
+  def when_failed(&block); on_failure(&block); end
+
   NIL_SUCCESS = Success.new(nil)
   NIL_FAILURE = Failure.new(nil)
 end
