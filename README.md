@@ -66,6 +66,35 @@ result.success? #=> false
 result.error #=> :buzz
 ```
 
+
+## Aliases
+
+Personally, I can never remember if it's `success?` or `successful?` or `ok?`,
+so let's just do it the Ruby way and allow all of them.
+
+```ruby
+result = Resonad.Success(5)
+
+# success aliases
+result.success?  #=> true
+result.successful?  #=> true
+result.ok?  #=> true
+
+# failure aliases
+result.failure?  #=> false
+result.failed?  #=> false
+result.bad?  #=> false
+
+# flat mapping aliases
+result.and_then { Resonad.Success(_1 + 1) }
+result.flat_map { Resonad.Success(_1 + 1) }
+
+# error flat mapping aliases
+result.or_else { Resonad.Failure(_1 + 1) }
+result.flat_map_error { Resonad.Success(_1 + 1) }
+```
+
+
 ## Flat Mapping (a.k.a. `and_then`)
 
 Non-destructive update for a `Success` object. Either turns it into another
@@ -85,6 +114,7 @@ result = Resonad.Success(5)
 # also has a less-friendly but more-technically-descriptive alias: `flat_map`
 result.flat_map { Resonad.Success(_1 + 1) }
 ```
+
 
 ## Automatic Exception Rescuing
 
