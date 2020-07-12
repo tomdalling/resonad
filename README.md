@@ -86,12 +86,12 @@ result.failed?  #=> false
 result.bad?  #=> false
 
 # flat mapping aliases
-result.and_then { Resonad.Success(_1 + 1) }
-result.flat_map { Resonad.Success(_1 + 1) }
+result.and_then { Resonad.Success(_1 + 1) }  #=> Success(6)
+result.flat_map { Resonad.Success(_1 + 1) }  #=> Success(6)
 
 # error flat mapping aliases
-result.or_else { Resonad.Failure(_1 + 1) }
-result.flat_map_error { Resonad.Success(_1 + 1) }
+result.or_else { Resonad.Failure(_1 + 1) }  # not run
+result.flat_map_error { Resonad.Success(_1 + 1) }  # not run
 ```
 
 
@@ -115,6 +115,60 @@ result = Resonad.Success(5)
 result.flat_map { Resonad.Success(_1 + 1) }
 ```
 
+This is different to Ruby's `#then` method added in 2.6. The block for `#then`
+would take a Resonad argument, regardless of whether it's `Success` or
+`Failure`. The block for `#and_then` takes a _`Success` object's value_, and
+only runs on `Success` objects, not `Failure` objects.
+
+
+## Error Mapping
+
+Just as `Success` objects can be chained with `#map` and `#and_then`, so can
+`Failure` objects with `#map_error` and `#or_else`. This isn't used as often,
+but has a few use cases such as:
+
+```ruby
+# Use Case: convert an error value into another error value
+make_http_request  #=> Failure(404)
+  .map_error { |status_code| "HTTP #{status_code} Error" }
+  .error #=> "HTTP 404 Error"
+
+# Use Case: recover from error, turning into Success
+load_config_file  #=> Failure(:config_file_missing)
+  .or_else { try_recover_from(_1) }
+  .value  #=> { :setting => 'default' }
+
+def try_recover_from(error)
+  if error == :config_file_missing
+    Resonad.Success({ setting: 'default' })
+  else
+    Resonad.Failure(error)
+  end
+end
+```
+
+
+## Conditional Tap
+
+If you're in the middle of a long chain of methods, and you don't want to break
+the chain to run some kind of side effect, you can use the `#on_success` and
+`#on_failure` methods. These run an arbitrary block code, but do not affect the
+result object in any way. They work like Ruby's `#tap` method, but `Failure`
+objects will not run `on_success` blocks, and `Success` objects will not run
+`on_failure` blocks.
+
+```ruby
+do_step_1
+  .and_then { do_step_2(_1) }
+  .and_then { do_step_3(_1) }
+  .on_success { puts "Successful step 3 result: #{_1}" }
+  .and_then { do_step_4(_1) }
+  .and_then { do_step_5(_1) }
+  .on_failure { puts "Uh oh! Step 5 failed: #{_1} }
+  .and_then { do_step_6(_1) }
+  .and_then { do_step_7(_1) }
+```
+
 
 ## Automatic Exception Rescuing
 
@@ -134,3 +188,32 @@ nope = try_divide(6, 0)
 nope.success? #=> false
 node.error #=> #<ZeroDivisionError: ZeroDivisionError>
 ```
+
+
+## Convenience Mixin
+
+If you're tired of typing "Resonad." in front of everything, you can include
+the `Resonad::Mixin` mixin.
+
+```ruby
+class SpiceOfLife
+  include Resonad::Mixin
+
+  def call
+    if rand > 0.5
+      Success("ya got lucky")
+    else
+      Failure("NOPE")
+    end
+  end
+end
+```
+
+
+## TODO
+
+ - "otherwise" alias for "or_else"
+ - "map_value" alias for "map"
+ - "Resonad::Success[5]" alias for "Resonad.Success(5)"
+ - aliases for "on_success" and "on_failure"
+
