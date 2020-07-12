@@ -2,7 +2,7 @@
 
 # Resonad
 
-Lightweight, monadic "result" objects that can be used instead of exceptions.
+Lightweight, functional "result" objects that can be used instead of exceptions.
 
 Read: [Result Objects - Errors Without Exceptions](https://www.rubypigeon.com/posts/result-objects-errors-without-exceptions/)
 
@@ -199,6 +199,8 @@ do_step_1
   .and_then { do_step_6(_1) }
   .and_then { do_step_7(_1) }
 ```
+
+There are lots of aliases for these methods. See the "Aliases" section above.
 
 
 ## Automatic Exception Rescuing
