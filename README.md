@@ -260,3 +260,14 @@ RobotFortuneTeller::Success
 If you want the methods/constants to be public, then use `Resonad::PublicMixin`
 instead.
 
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at:
+https://github.com/tomdalling/resonad
+
+I'm open to PRs that make the gem more convenient, or that makes calling code
+read better.
+
+Make sure your PR has full test coverage.
+
