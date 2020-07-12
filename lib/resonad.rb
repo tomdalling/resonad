@@ -2,14 +2,6 @@ class Resonad
   class NonExistentError < StandardError; end
   class NonExistentValue < StandardError; end
 
-  module Mixin
-    def Success(*args); Success[*args]; end
-    def success(*args); Success[*args]; end
-    def Failure(*args); Failure[*args]; end
-    def failure(*args); Failure[*args]; end
-  end
-  extend Mixin
-
   class Success < Resonad
     attr_accessor :value
 
@@ -119,6 +111,25 @@ class Resonad
       yield error
     end
   end
+
+  module PublicMixin
+    Success = ::Resonad::Success
+    Failure = ::Resonad::Failure
+
+    def Success(*args); Success[*args]; end
+    def success(*args); Success[*args]; end
+    def Failure(*args); Failure[*args]; end
+    def failure(*args); Failure[*args]; end
+  end
+
+  Mixin = PublicMixin.dup.tap do |mixin|
+    mixin.module_eval do
+      private(*public_instance_methods)
+      private_constant(*constants)
+    end
+  end
+
+  extend PublicMixin
 
   def self.rescuing_from(*exception_classes)
     Success(yield)

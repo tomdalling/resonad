@@ -227,15 +227,36 @@ If you're tired of typing "Resonad." in front of everything, you can include
 the `Resonad::Mixin` mixin.
 
 ```ruby
-class SpiceOfLife
+class RobotFortuneTeller
   include Resonad::Mixin
 
-  def call
-    if rand > 0.5
-      Success("ya got lucky")
+  def next_fortune
+    case rand(0..100)
+    when 0..70
+      # title-case constructor from Resonad::Mixin
+      Success("today is auspicious")
+    when 71..95
+      # lower-case constructor from Resonad::Mixin
+      success("ill omens abound")
     else
-      Failure("NOPE")
+      # direct access to classes from Resonad::Mixin
+      Failure.new("MALFUNCTION")
     end
   end
 end
 ```
+
+Note that `Resonad::Mixin` provides private methods, and private constants, so
+you can't do this:
+
+```ruby
+RobotFortuneTeller.new.Success(5)
+  #=> NoMethodError: private method `Success' called for #<RobotFortuneTeller:0x00007fe7fc0ff0c8>
+
+RobotFortuneTeller::Success
+  #=> NameError: private constant Resonad::Mixin::Success referenced
+```
+
+If you want the methods/constants to be public, then use `Resonad::PublicMixin`
+instead.
+
