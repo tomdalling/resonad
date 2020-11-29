@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "resonad"
+require "support/naming"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

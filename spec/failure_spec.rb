@@ -1,16 +1,4 @@
 RSpec.describe Resonad::Failure do
-  AND_THEN_ALIASES = [:and_then, :flat_map]
-  OR_ELSE_ALIASES = [:or_else, :otherwise, :flat_map_error]
-  SUCCESS_ALIASES = [:success?, :successful?, :ok?]
-  FAILURE_ALIASES = [:failure?, :failed?, :bad?]
-  MAP_ALIASES = [:map, :map_value]
-
-  ON_PREFIXES = ["on_", "if_", "when_"]
-  ON_SUCCESS_SUFFIXES = SUCCESS_ALIASES.map { |m| m.to_s.chomp('?') }
-  ON_FAILURE_SUFFIXES = FAILURE_ALIASES.map { |m| m.to_s.chomp('?') }
-  ON_SUCCESS_ALIASES = ON_PREFIXES.product(ON_SUCCESS_SUFFIXES).map(&:join)
-  ON_FAILURE_ALIASES = ON_PREFIXES.product(ON_FAILURE_SUFFIXES).map(&:join)
-
   subject { Resonad.Failure(:buzz) }
 
   it "has an alternate, more-standardly-named constructor method" do
@@ -25,13 +13,13 @@ RSpec.describe Resonad::Failure do
     expect(alternate.error).to be(subject.error)
   end
 
-  SUCCESS_ALIASES.each do |success|
+  Naming::SUCCESS_ALIASES.each do |success|
     specify "##{success} does not indicate success" do
       expect(subject.public_send(success)).to be(false)
     end
   end
 
-  FAILURE_ALIASES.each do |failure|
+  Naming::FAILURE_ALIASES.each do |failure|
     specify "##{failure} indicates failure" do
       expect(subject.public_send(failure)).to be(true)
     end
@@ -45,7 +33,7 @@ RSpec.describe Resonad::Failure do
     expect{ subject.value }.to raise_error(Resonad::NonExistentValue)
   end
 
-  MAP_ALIASES.each do |map|
+  Naming::MAP_ALIASES.each do |map|
     specify "##{map} does nothing" do
       result = subject.public_send(map) { |value| fail }
       expect(result).to be(subject)
@@ -62,28 +50,28 @@ RSpec.describe Resonad::Failure do
     expect(result).to be(subject)
   end
 
-  AND_THEN_ALIASES.each do |and_then|
+  Naming::AND_THEN_ALIASES.each do |and_then|
     it "can not be #{and_then}'d" do
       result = subject.public_send(and_then){ |value| fail }
       expect(result).to be(subject)
     end
   end
 
-  OR_ELSE_ALIASES.each do |or_else|
+  Naming::OR_ELSE_ALIASES.each do |or_else|
     it "can be #{or_else}'d" do
       result = subject.flat_map_error{ |error| error.to_s }
       expect(result).to eq('buzz')
     end
   end
 
-  ON_SUCCESS_ALIASES.each do |on_success|
+  Naming::ON_SUCCESS_ALIASES.each do |on_success|
     specify "##{on_success} does not yield, and returns self" do
       result = subject.public_send(on_success) { raise 'this should not be called' }
       expect(result).to be(subject)
     end
   end
 
-  ON_FAILURE_ALIASES.each do |on_failure|
+  Naming::ON_FAILURE_ALIASES.each do |on_failure|
     specify "##{on_failure} yields the error, and returns self" do
       result = subject.public_send(on_failure) do |error|
         expect(error).to eq(:buzz)
