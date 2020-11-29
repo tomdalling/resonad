@@ -100,4 +100,9 @@ RSpec.describe Resonad::Failure do
     include_context 'higher_order_send using block argument'
     include_examples 'higher-order methods (Resonad::Failure)'
   end
+
+  context 'higher-order methods using callable positional argument' do
+    include_context 'higher_order_send using callable positional argument'
+    include_examples 'higher-order methods (Resonad::Failure)'
+  end
 end
