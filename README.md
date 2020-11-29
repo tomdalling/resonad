@@ -202,6 +202,30 @@ do_step_1
 
 There are lots of aliases for these methods. See the "Aliases" section above.
 
+## Callable Object Arguments
+
+Anywhere that you can use a block argument, you have the ability to
+provide a callable object instead.
+
+For example, this block argument:
+
+```ruby
+Resonad.Success(42).map { |x| x * 2 }
+#=> 84
+```
+
+Could also be given as an object that implements `#call`:
+
+```ruby
+class Doubler
+  def call(x)
+    x * 2
+  end
+end
+
+Resonad.Success(42).map(Doubler.new)
+#=> 84
+```
 
 ## Pattern Matching Support
 
