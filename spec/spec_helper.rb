@@ -1,4 +1,5 @@
 require "bundler/setup"
+require "byebug"
 require "resonad"
 require "support/naming"
 
