@@ -88,7 +88,7 @@ class Resonad
     end
 
     def value
-      raise NonExistentValue, "Failure resonads do no have values"
+      raise NonExistentValue, "Failure resonads do not have values"
     end
 
     def deconstruct
