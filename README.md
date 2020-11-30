@@ -210,7 +210,7 @@ provide a callable object instead.
 For example, this block argument:
 
 ```ruby
-Resonad.Success(42).map { |x| x * 2 }
+Resonad.Success(42).map{ |x| x * 2 }.value
 #=> 84
 ```
 
@@ -223,7 +223,7 @@ class Doubler
   end
 end
 
-Resonad.Success(42).map(Doubler.new)
+Resonad.Success(42).map(Doubler.new).value
 #=> 84
 ```
 
